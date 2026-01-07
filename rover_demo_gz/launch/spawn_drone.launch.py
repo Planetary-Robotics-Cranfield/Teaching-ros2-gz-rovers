@@ -107,9 +107,6 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
             robot_ns + "/true_pose@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             "/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V",
             robot_ns + "/imu/data_raw@sensor_msgs/msg/Imu[gz.msgs.IMU",
-            robot_ns + "/pointcloud/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked",
-            robot_ns
-            + "/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
             robot_ns + "/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model",
         ],
         parameters=[
@@ -120,21 +117,11 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         output="screen",
     )
 
-    # Camera image bridge
-    image_bridge = Node(
-        namespace="",
-        package="ros_gz_image",
-        executable="image_bridge",
-        name=node_name_prefix + "image_bridge",
-        arguments=[robot_ns + "/camera/image_raw"],
-        output="screen",
-    )
     return [
         robot_state_publisher,
         joint_state_publisher,
         leo_rover,
         topic_bridge,
-        image_bridge,
     ]
 
 
