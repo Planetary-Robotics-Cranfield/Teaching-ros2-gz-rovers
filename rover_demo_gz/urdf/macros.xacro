@@ -449,14 +449,13 @@
         <surface>
           <friction>
             <ode>
-              <mu>15</mu>
+              <mu>1</mu>
               <mu2>1</mu2>
-              <slip1>0</slip1>
-              <slip2>0</slip2>
-              <fdir1>1 0 0</fdir1>
+              <slip1>0.01</slip1>
+              <slip2>0.01</slip2>
             </ode>
             <bullet>
-              <friction>15</friction>
+              <friction>1</friction>
               <friction2>1</friction2>
               <rolling_friction>0</rolling_friction>
             </bullet>
@@ -470,14 +469,13 @@
         <surface>
           <friction>
             <ode>
-              <mu>15</mu>
+              <mu>1</mu>
               <mu2>1</mu2>
-              <slip1>0</slip1>
-              <slip2>0</slip2>
-              <fdir1>1 0 0</fdir1>
+              <slip1>0.01</slip1>
+              <slip2>0.01</slip2>
             </ode>
             <bullet>
-              <friction>15</friction>
+              <friction>1</friction>
               <friction2>1</friction2>
               <rolling_friction>0</rolling_friction>
             </bullet>
@@ -491,14 +489,13 @@
         <surface>
           <friction>
             <ode>
-              <mu>15</mu>
+              <mu>1</mu>
               <mu2>1</mu2>
-              <slip1>0</slip1>
-              <slip2>0</slip2>
-              <fdir1>1 0 0</fdir1>
+              <slip1>0.01</slip1>
+              <slip2>0.01</slip2>
             </ode>
             <bullet>
-              <friction>15</friction>
+              <friction>1</friction>
               <friction2>1</friction2>
               <rolling_friction>0</rolling_friction>
             </bullet>
@@ -512,14 +509,13 @@
         <surface>
           <friction>
             <ode>
-              <mu>15</mu>
+              <mu>1</mu>
               <mu2>1</mu2>
-              <slip1>0</slip1>
-              <slip2>0</slip2>
-              <fdir1>1 0 0</fdir1>
+              <slip1>0.01</slip1>
+              <slip2>0.01</slip2>
             </ode>
             <bullet>
-              <friction>15</friction>
+              <friction>1</friction>
               <friction2>1</friction2>
               <rolling_friction>0</rolling_friction>
             </bullet>
@@ -586,7 +582,7 @@
             </vertical>
           </scan>
           <range>
-            <min>0.08</min>
+            <min>1.0</min>
             <max>10.0</max>
             <resolution>0.01</resolution>
           </range>
@@ -646,7 +642,7 @@
       <plugin filename="libignition-gazebo-odometry-publisher-system.so" name="ignition::gazebo::systems::OdometryPublisher">
         <update_frequency>10</update_frequency>
         <odom_topic>${link_prefix}true_pose</odom_topic>
-        <odom_frame>world</odom_frame>
+        <odom_frame>odom</odom_frame>
         <robot_base_frame>${link_prefix}base_footprint</robot_base_frame>
         <tf_topic>tf</tf_topic>
       </plugin>
@@ -679,9 +675,9 @@
               />
 
     <xacro:if value="${fixed}">
-      <link name="world"/>
+      <link name="odom"/>
       <joint name="fixed" type="fixed">
-        <parent link="world"/>
+        <parent link="odom"/>
         <child link="${link_prefix}base_footprint"/>
         <origin xyz="0.0 0.0 1.0"/>
       </joint>

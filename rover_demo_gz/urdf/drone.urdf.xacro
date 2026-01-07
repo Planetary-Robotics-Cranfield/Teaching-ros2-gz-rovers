@@ -4,7 +4,7 @@
   <!-- Parameters -->
   <xacro:property name="mass" value="1.0"/>
   <xacro:property name="arm_length" value="0.25"/>
-  <xacro:property name="link_prefix" value = "" />
+  <xacro:property name="link_prefix" value = "drone/" />
   <xacro:arg name="robot_ns" default=""/>
   <xacro:property name="robot_ns" value="$(arg robot_ns)"/>
 
@@ -197,7 +197,7 @@
     <plugin filename="libignition-gazebo-odometry-publisher-system.so" name="ignition::gazebo::systems::OdometryPublisher">
         <update_frequency>10</update_frequency>
         <odom_topic>${robot_ns}/true_pose</odom_topic>
-        <odom_frame>world</odom_frame>
+        <odom_frame>odom</odom_frame>
         <robot_base_frame>${link_prefix}base_link</robot_base_frame>
         <tf_topic>tf</tf_topic>
     </plugin>
