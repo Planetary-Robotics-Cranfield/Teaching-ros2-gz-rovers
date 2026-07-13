@@ -9,8 +9,10 @@ from launch_ros.parameter_descriptions import ParameterFile
 import xacro, tempfile, yaml, os
 
 
-def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z, ros_control_config):
+def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z, ros_control_config, tilted_lidar):
     robot_ns = context.perform_substitution(namespace)
+
+    use_tilted_lidar = context.perform_substitution(tilted_lidar)
 
     descr_pkg_share = get_package_share_directory("go2_description")
 
@@ -32,7 +34,8 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z,
     robot_desc = xacro.process(
         urdf_path,
         mappings={"robot_ns": robot_ns,
-                  "robot_controllers": namespaced_config_path},
+                  "robot_controllers": namespaced_config_path,
+                  "tilted_lidar": use_tilted_lidar},
     )
 
     if robot_ns == "":
@@ -86,7 +89,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z,
             robot_ns + '/imu/data@sensor_msgs/msg/Imu@gz.msgs.IMU',
             robot_ns + '/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
             robot_ns + '/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model',
-            robot_ns + '/velodyne_points/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            robot_ns + '/hesai_lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
             robot_ns + '/unitree_lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
             robot_ns + '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
             robot_ns + '/rgb_image@sensor_msgs/msg/Image@gz.msgs.Image',
@@ -229,13 +232,21 @@ def generate_launch_description():
         description="Ros control config path",
     )
 
+    declare_tilted_lidar = DeclareLaunchArgument(
+        "tilted_lidar",
+        default_value="False",
+        description="Whether the lidar should be tilted forward 45 degrees to get a better view of the ground.",
+    )
+
     namespace = LaunchConfiguration("robot_ns")
     x = LaunchConfiguration("x")
     y = LaunchConfiguration("y")
     z = LaunchConfiguration("z")
+    tilted_lidar = LaunchConfiguration("tilted_lidar")
 
     return LaunchDescription([
         name_argument, 
         declare_ros_control_file,
-        OpaqueFunction(function=spawn_robot, args=[namespace, x, y, z, ros_control_config])
+        declare_tilted_lidar,
+        OpaqueFunction(function=spawn_robot, args=[namespace, x, y, z, ros_control_config, tilted_lidar])
     ])

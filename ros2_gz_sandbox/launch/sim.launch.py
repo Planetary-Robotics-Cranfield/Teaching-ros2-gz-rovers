@@ -18,6 +18,8 @@ def generate_launch_description():
     robot_y = DeclareLaunchArgument("robot_y", default_value="0.0", description="Y position of the first robot")
     robot_z = DeclareLaunchArgument("robot_z", default_value="1.0", description="Z position of the first robot")
 
+    go2_tilted_lidar = DeclareLaunchArgument("tilted_lidar", default_value="False", description="Whether the top lidar of the go2 should be tilted forward")
+
     sim_world = DeclareLaunchArgument(
         "sim_world",
         default_value=[package_path, "/worlds/", LaunchConfiguration("world_name"), ".sdf"],
@@ -60,6 +62,30 @@ def generate_launch_description():
         }.items(),
     )
 
+    spawn_go2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_path, "launch", "spawn_go2.launch.py")
+        ),
+        launch_arguments={"robot_ns": "go2",
+                          "x": PythonExpression([LaunchConfiguration("robot_x"), " + 2.0"]),
+                          "y": PythonExpression([LaunchConfiguration("robot_x"), " + 1.0"]),
+                          "z": LaunchConfiguration("robot_z"),
+                          "tilted_lidar": LaunchConfiguration("tilted_lidar")
+                          }.items(),
+    )
+
+    spawn_multimodal = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_path, "launch", "spawn_multimodal.launch.py")
+        ),
+        launch_arguments={"robot_ns": "multimodal",
+                          "x": PythonExpression([LaunchConfiguration("robot_x"), " + 2.0"]),
+                          "y": PythonExpression([LaunchConfiguration("robot_x"), " + 2.0"]),
+                          "z": LaunchConfiguration("robot_z"),
+                          }.items(),
+    )
+
+
     # Bridge ROS topics and Gazebo messages for establishing communication
     topic_bridge = Node(
         package="ros_gz_bridge",
@@ -88,9 +114,12 @@ def generate_launch_description():
             robot_x,
             robot_y,
             robot_z,
+            go2_tilted_lidar,
             gz_sim,
             spawn_leo,
             spawn_drone,
+            spawn_go2,
+            spawn_multimodal,
             topic_bridge,
         ]
     )
